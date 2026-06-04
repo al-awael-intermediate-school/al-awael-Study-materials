@@ -1,9 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المواد الدراسية - منصة متوسطة وثانوية الأوائل</title>
+
+    <!-- ========= Additional Security Programs ========== -->
+    <!-- 1. Prevent page loading within iframe (Clickjacking Protection) -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <!-- 2. Prevent the browser from guessing the MIME type (prevents the execution of malicious files) -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- 3. Restricting access to dangerous features -->
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=()">
+    <!-- 4. Content Security Policy (CSP) -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;
+        style-src 'self' 'unsafe-inline' https:;
+        font-src 'self' https: data:;
+        img-src 'self' data: https: blob:;
+        connect-src 'self' https:;
+        frame-src 'self' https://wordwall.net;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="icon" type="image/png" href="https://i.postimg.cc/FH3FLXRR/abroad.png">
@@ -119,10 +142,28 @@
             color: white;
             cursor: pointer;
             transition: transform 0.2s;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .user-avatar:hover {
             transform: scale(1.05);
+        }
+
+        .header-username {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* قائمة التطبيقات المنسدلة */
@@ -204,6 +245,64 @@
 
         .support-btn:hover {
             background-color: #f0f2f5;
+        }
+
+        /* ========== مودال الخروج ========== */
+        .exit-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .exit-modal-content {
+            background-color: white;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 350px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .exit-modal-content img {
+            width: 180px;
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .exit-modal-content p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .confirm-exit-btn {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .confirm-exit-btn:hover {
+            background: #c62828;
+            transform: scale(1.05);
         }
 
         /* ========== مودال الحساب ========== */
@@ -296,7 +395,7 @@
             border: 1px solid #e2e8f0;
             padding: 24px;
             width: 90%;
-            max-width: 320px;
+            max-width: 360px;
             border-radius: 16px;
             background-color: #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -306,8 +405,8 @@
         }
 
         .profile-circle {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             border-radius: 50%;
             margin: 0 auto 16px auto;
@@ -315,11 +414,46 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .profile-circle .material-symbols-outlined {
             font-size: 50px;
             color: white;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+
+        .avatar-edit-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 10px;
+            padding: 4px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0 0 50% 50%;
+        }
+
+        .profile-circle:hover .avatar-edit-overlay {
+            opacity: 1;
         }
 
         .account-box h3 {
@@ -327,6 +461,13 @@
             color: #1e293b;
             font-size: 1.3rem;
             font-weight: 600;
+        }
+
+        .account-box .user-email-display {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            word-break: break-all;
         }
 
         .account-box p {
@@ -354,6 +495,139 @@
             background: #3b82f6;
             margin: 8px auto 0 auto;
             border-radius: 3px;
+        }
+
+        .edit-profile-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            text-align: right;
+        }
+
+        .edit-profile-section label {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .edit-profile-section input[type="text"],
+        .edit-profile-section input[type="email"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            direction: rtl;
+        }
+
+        .edit-profile-section input[type="text"]:focus,
+        .edit-profile-section input[type="email"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .avatar-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .avatar-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            object-fit: cover;
+            background-color: #f1f5f9;
+        }
+
+        .avatar-option:hover {
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .file-upload-btn {
+            background: #f1f5f9;
+            border: 1px dashed #94a3b8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #475569;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-upload-btn:hover {
+            background: #e2e8f0;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+        }
+
+        .save-profile-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            transition: all 0.2s;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .save-profile-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .save-success {
+            color: #10b981;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .close-account-btn {
@@ -753,6 +1027,9 @@
             .subjects-grid {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
+            .header-username {
+                display: none;
+            }
         }
 
         @media (max-width: 768px) {
@@ -797,7 +1074,7 @@
                     <img src="https://i.postimg.cc/Zn51CfZ8/lqtt-shasht-2026-03-31-132111.png" alt="منصة متوسطة وثانوية الأوائل">
                 </div>
                 <div class="user-menu">
-                    <!-- أيقونة الإشعارات - cursor pointer فقط بدون hover -->
+                    <!-- أيقونة الإشعارات -->
                     <div class="notification-icon" id="notificationBtn">
                         <i class="fas fa-bell"></i>
                         <span class="notification-count">1</span>
@@ -810,14 +1087,16 @@
                             <span>التطبيقات</span>
                         </button>
                         <div class="dropdown-content" id="appsDropdownMenu">
-                            <a href="#" data-external="https://www.microsoft.com/ar/microsoft-365/powerpoint" class="external-link">
-                                <i class="fas fa-chalkboard"></i> PowerPoint
+                            <a href="#" data-external="https://restudiosoftwarelaboratories.github.io/Restudio-Presentation/" class="external-link">
+                                <i class="fas fa-chalkboard"></i> Restudio Presentation
                             </a>
-                            <a href="#" data-external="https://www.microsoft.com/ar/microsoft-365/word" class="external-link">
-                                <i class="fas fa-file-alt"></i> Word
+                            <a href="#" data-external="https://restudiosoftwarelaboratories.github.io/Restudio-Documents/" class="external-link">
+                                <i class="fas fa-file-alt"></i> Restudio Documents
+                            
                             </a>
-                            <a href="#" data-external="https://www.microsoft.com/ar/microsoft-365/microsoft-excel" class="external-link">
-                                <i class="fas fa-table"></i> Excel
+                            <a href="#" data-external="https://restudiosoftwarelaboratories.github.io/Restudio-Tables/" class="external-link">
+                                <i class="fas fa-table"></i> Restudio Tables
+                            
                             </a>
                             <a href="#" data-external="https://outlook.office.com/" class="external-link">
                                 <i class="fas fa-envelope"></i> Outlook
@@ -838,9 +1117,11 @@
                     </button>
 
                     <!-- صورة المستخدم -->
-                    <div class="user-avatar" id="profileBtn">
-                        <i class="fas fa-user"></i>
+                    <div class="user-avatar" id="profileBtn" title="الملف الشخصي">
+                        <i class="fas fa-user" id="headerDefaultIcon"></i>
+                        <img id="headerAvatarImg" src="" alt="صورة المستخدم" style="display: none;">
                     </div>
+                    <span class="header-username" id="headerUsername">مستخدم لمنصة الأوائل</span>
                 </div>
             </div>
         </div>
@@ -893,10 +1174,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -911,10 +1192,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -929,10 +1210,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -947,10 +1228,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -965,10 +1246,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -983,10 +1264,10 @@
                         </div>
                         <div class="subject-content">
                             <div class="subject-actions">
-                                <a href="https://www.youtube.com/@iendroos" target="_blank" class="subject-btn primary">
+                                <a href="#" data-external="https://www.youtube.com/@iendroos" class="subject-btn primary external-link">
                                     <i class="fas fa-play"></i> استمر في التعلم
                                 </a>
-                                <a href="https://www.wajibati.net/" target="_blank" class="subject-btn outline">
+                                <a href="#" data-external="https://www.wajibati.net/" class="subject-btn outline external-link">
                                     <i class="fas fa-book-open"></i> المحتوى
                                 </a>
                             </div>
@@ -994,6 +1275,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- مودال الخروج للمواقع الخارجية -->
+    <div id="exitModal" class="exit-modal">
+        <div class="exit-modal-content">
+            <img src="https://i.postimg.cc/667NrLqs/emergency-exit.png" alt="exit icon">
+            <p>هل أنت متأكد من رغبتك في مغادرة المنصة؟</p>
+            <button class="confirm-exit-btn" id="confirmExitBtn">
+                <span class="material-symbols-outlined">logout</span>
+                تأكيد
+            </button>
         </div>
     </div>
 
@@ -1007,11 +1300,43 @@
             <div class="skeleton-button"></div>
         </div>
         <div id="accountBox" class="account-box">
-            <div class="profile-circle">
-                <span class="material-symbols-outlined">account_circle</span>
+            <div class="profile-circle" id="profileCirclePopup" title="انقر لتغيير الصورة">
+                <span class="material-symbols-outlined" id="defaultAvatarIcon">account_circle</span>
+                <img id="profileImagePopup" src="" alt="صورة المستخدم" style="display: none;">
+                <div class="avatar-edit-overlay">تغيير</div>
             </div>
-            <h3>مستخدم لمنصة الأوائل</h3>
+            <h3 id="displayName">مستخدم لمنصة الأوائل</h3>
+            <div class="user-email-display" id="displayEmail"></div>
             <div class="divider"></div>
+            
+            <div class="edit-profile-section">
+                <label for="editNameInput">الاسم</label>
+                <input type="text" id="editNameInput" placeholder="أدخل اسمك" maxlength="30">
+                
+                <label for="editEmailInput">البريد الإلكتروني</label>
+                <input type="email" id="editEmailInput" placeholder="example@email.com">
+                
+                <label>اختر صورة</label>
+                <div class="avatar-options" id="avatarOptions">
+                    <img src="https://i.postimg.cc/mrDm4RRc/dylan-1778948190666.png" class="avatar-option" data-avatar="https://i.postimg.cc/mrDm4RRc/dylan-1778948190666.png" alt="Avatar 1" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/5yw3g2q6/dylan-1778948200197.png" class="avatar-option" data-avatar="https://i.postimg.cc/5yw3g2q6/dylan-1778948200197.png" alt="Avatar 2" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/J4LKnjMn/dylan-1778948206376.png" class="avatar-option" data-avatar="https://i.postimg.cc/J4LKnjMn/dylan-1778948206376.png" alt="Avatar 3" onclick="selectAvatar(this)">
+                    <img src="https://i.postimg.cc/4x45vZYL/dylan-1778948196954.png" class="avatar-option" data-avatar="https://i.postimg.cc/4x45vZYL/dylan-1778948196954.png" alt="Avatar 4" onclick="selectAvatar(this)">
+                </div>
+                
+                <div class="file-upload-wrapper">
+                    <button class="file-upload-btn">
+                        <i class="fas fa-upload"></i> رفع من الجهاز
+                    </button>
+                    <input type="file" class="file-upload-input" id="fileUploadInput" accept="image/*">
+                </div>
+                
+                <button class="save-profile-btn" id="saveProfileBtn">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+                <div class="save-success" id="saveSuccess">✓ تم الحفظ بنجاح</div>
+            </div>
+            
             <p>لرؤية تفاصيل الحساب يرجى الذهاب إلى 
                 <a href="https://schools.madrasati.sa" target="_blank">منصة مدرستي</a>
             </p>
@@ -1073,48 +1398,283 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ========== مودال الحساب (يظهر عند الضغط على الصورة) ==========
+            // ========== إعدادات localStorage ==========
+            const STORAGE_KEY = 'alawael_user_profile';
+            
+            function getProfile() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try {
+                        return JSON.parse(saved);
+                    } catch(e) {
+                        return getDefaultProfile();
+                    }
+                }
+                return getDefaultProfile();
+            }
+            
+            function getDefaultProfile() {
+                return {
+                    name: 'مستخدم لمنصة الأوائل',
+                    email: '',
+                    avatar: ''
+                };
+            }
+            
+            function saveProfile(profile) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+            }
+            
+            let currentProfile = getProfile();
+            let selectedAvatar = currentProfile.avatar || '';
+            
+            // ========== تحديث واجهة المستخدم ==========
+            function updateAllUI() {
+                const headerUsername = document.getElementById('headerUsername');
+                if (headerUsername) {
+                    headerUsername.textContent = currentProfile.name;
+                }
+                
+                updateHeaderAvatar();
+                updatePopupFields();
+            }
+            
+            function updateHeaderAvatar() {
+                const headerDefaultIcon = document.getElementById('headerDefaultIcon');
+                const headerAvatarImg = document.getElementById('headerAvatarImg');
+                
+                if (currentProfile.avatar) {
+                    if (headerDefaultIcon) headerDefaultIcon.style.display = 'none';
+                    if (headerAvatarImg) {
+                        headerAvatarImg.src = currentProfile.avatar;
+                        headerAvatarImg.style.display = 'block';
+                    }
+                } else {
+                    if (headerDefaultIcon) headerDefaultIcon.style.display = 'block';
+                    if (headerAvatarImg) {
+                        headerAvatarImg.src = '';
+                        headerAvatarImg.style.display = 'none';
+                    }
+                }
+            }
+            
+            function updatePopupFields() {
+                const displayName = document.getElementById('displayName');
+                const displayEmail = document.getElementById('displayEmail');
+                const editNameInput = document.getElementById('editNameInput');
+                const editEmailInput = document.getElementById('editEmailInput');
+                
+                if (displayName) displayName.textContent = currentProfile.name;
+                if (displayEmail) displayEmail.textContent = currentProfile.email || '';
+                if (editNameInput) editNameInput.value = currentProfile.name;
+                if (editEmailInput) editEmailInput.value = currentProfile.email || '';
+                
+                updatePopupAvatar();
+                highlightSelectedAvatar();
+            }
+            
+            function updatePopupAvatar() {
+                const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                const profileImagePopup = document.getElementById('profileImagePopup');
+                
+                if (currentProfile.avatar) {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = currentProfile.avatar;
+                        profileImagePopup.style.display = 'block';
+                    }
+                } else {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'block';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = '';
+                        profileImagePopup.style.display = 'none';
+                    }
+                }
+            }
+            
+            function highlightSelectedAvatar() {
+                const avatarOptions = document.querySelectorAll('.avatar-option');
+                avatarOptions.forEach(opt => {
+                    if (opt.getAttribute('data-avatar') === selectedAvatar) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // ========== اختيار الأفاتار ==========
+            window.selectAvatar = function(element) {
+                selectedAvatar = element.getAttribute('data-avatar');
+                highlightSelectedAvatar();
+                
+                const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                const profileImagePopup = document.getElementById('profileImagePopup');
+                if (selectedAvatar) {
+                    if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                    if (profileImagePopup) {
+                        profileImagePopup.src = selectedAvatar;
+                        profileImagePopup.style.display = 'block';
+                    }
+                }
+            };
+            
+            // ========== رفع صورة من الجهاز ==========
+            const fileUploadInput = document.getElementById('fileUploadInput');
+            if (fileUploadInput) {
+                fileUploadInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            selectedAvatar = event.target.result;
+                            document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+                            const defaultAvatarIcon = document.getElementById('defaultAvatarIcon');
+                            const profileImagePopup = document.getElementById('profileImagePopup');
+                            if (defaultAvatarIcon) defaultAvatarIcon.style.display = 'none';
+                            if (profileImagePopup) {
+                                profileImagePopup.src = selectedAvatar;
+                                profileImagePopup.style.display = 'block';
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('الرجاء اختيار ملف صورة صالح.');
+                    }
+                });
+            }
+            
+            // ========== حفظ التغييرات ==========
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const saveSuccess = document.getElementById('saveSuccess');
+            
+            if (saveProfileBtn) {
+                saveProfileBtn.addEventListener('click', function() {
+                    const editNameInput = document.getElementById('editNameInput');
+                    const editEmailInput = document.getElementById('editEmailInput');
+                    
+                    const newName = editNameInput ? editNameInput.value.trim() : '';
+                    const newEmail = editEmailInput ? editEmailInput.value.trim() : '';
+                    
+                    if (!newName) {
+                        alert('الرجاء إدخال اسم المستخدم.');
+                        return;
+                    }
+                    
+                    currentProfile.name = newName;
+                    currentProfile.email = newEmail;
+                    currentProfile.avatar = selectedAvatar;
+                    
+                    saveProfile(currentProfile);
+                    updateAllUI();
+                    
+                    if (saveSuccess) {
+                        saveSuccess.style.display = 'block';
+                        setTimeout(() => {
+                            saveSuccess.style.display = 'none';
+                        }, 2000);
+                    }
+                });
+            }
+            
+            // ========== النقر على الأفاتار في البوب أب ==========
+            const profileCirclePopup = document.getElementById('profileCirclePopup');
+            if (profileCirclePopup && fileUploadInput) {
+                profileCirclePopup.addEventListener('click', function() {
+                    fileUploadInput.click();
+                });
+            }
+            
+            // ========== تحديث أولي ==========
+            updateAllUI();
+            
+            // ========== مودال الخروج ==========
+            let pendingUrl = null;
+            const exitModal = document.getElementById('exitModal');
+            const confirmExitBtn = document.getElementById('confirmExitBtn');
+            
+            function showExitModal(url) {
+                pendingUrl = url;
+                exitModal.style.display = 'flex';
+            }
+            
+            function hideExitModal() {
+                exitModal.style.display = 'none';
+                pendingUrl = null;
+            }
+            
+            function confirmExit() {
+                if (pendingUrl) {
+                    window.open(pendingUrl, '_blank');
+                    hideExitModal();
+                }
+            }
+            
+            if (exitModal) {
+                exitModal.addEventListener('click', function(e) {
+                    if (e.target === exitModal) hideExitModal();
+                });
+            }
+            
+            if (confirmExitBtn) {
+                confirmExitBtn.addEventListener('click', confirmExit);
+            }
+            
+            const externalLinks = document.querySelectorAll('.external-link');
+            externalLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-external');
+                    if (url) showExitModal(url);
+                });
+            });
+            
+            // ========== مودال الحساب ==========
             const accountWrapper = document.getElementById('accountWrapper');
             const accountSkeleton = document.getElementById('accountSkeleton');
             const accountBox = document.getElementById('accountBox');
             const profileBtn = document.getElementById('profileBtn');
             
-            function openAccountModal() {
-                if (accountWrapper) {
-                    accountWrapper.style.display = 'flex';
-                    if (accountSkeleton) accountSkeleton.style.display = 'block';
-                    if (accountBox) accountBox.style.display = 'none';
-                    
-                    setTimeout(() => {
-                        if (accountSkeleton) accountSkeleton.style.display = 'none';
-                        if (accountBox) accountBox.style.display = 'block';
-                    }, 1000);
-                }
-            }
-            
-            function closeAccountModal() {
-                if (accountWrapper) {
-                    accountWrapper.style.display = 'none';
-                    setTimeout(() => {
+            if (profileBtn) {
+                profileBtn.addEventListener('click', function() {
+                    if (accountWrapper) {
+                        currentProfile = getProfile();
+                        selectedAvatar = currentProfile.avatar || '';
+                        updateAllUI();
+                        
+                        accountWrapper.style.display = 'flex';
                         if (accountSkeleton) accountSkeleton.style.display = 'block';
                         if (accountBox) accountBox.style.display = 'none';
-                    }, 300);
-                }
-            }
-            
-            if (profileBtn) {
-                profileBtn.addEventListener('click', openAccountModal);
+                        
+                        setTimeout(() => {
+                            if (accountSkeleton) accountSkeleton.style.display = 'none';
+                            if (accountBox) accountBox.style.display = 'block';
+                        }, 1000);
+                    }
+                });
             }
             
             const closeAccountBtn = document.getElementById('closeAccountBtn');
             if (closeAccountBtn) {
-                closeAccountBtn.addEventListener('click', closeAccountModal);
+                closeAccountBtn.addEventListener('click', function() {
+                    if (accountWrapper) {
+                        accountWrapper.style.display = 'none';
+                        setTimeout(() => {
+                            if (accountSkeleton) accountSkeleton.style.display = 'block';
+                            if (accountBox) accountBox.style.display = 'none';
+                        }, 300);
+                    }
+                });
             }
             
             if (accountWrapper) {
                 accountWrapper.addEventListener('click', function(e) {
                     if (e.target === accountWrapper) {
-                        closeAccountModal();
+                        accountWrapper.style.display = 'none';
+                        setTimeout(() => {
+                            if (accountSkeleton) accountSkeleton.style.display = 'block';
+                            if (accountBox) accountBox.style.display = 'none';
+                        }, 300);
                     }
                 });
             }
@@ -1181,7 +1741,10 @@
                 if (e.key === 'Escape') {
                     if (supportModal && supportModal.style.display === 'flex') closeSupportModal();
                     if (notificationModal && notificationModal.style.display === 'flex') closeNotificationModal();
-                    if (accountWrapper && accountWrapper.style.display === 'flex') closeAccountModal();
+                    if (accountWrapper && accountWrapper.style.display === 'flex') {
+                        accountWrapper.style.display = 'none';
+                    }
+                    if (exitModal && exitModal.style.display === 'flex') hideExitModal();
                 }
             });
             
